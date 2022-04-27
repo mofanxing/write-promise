@@ -27,5 +27,22 @@ class MyPromise {
         }
         
     }
+
+    then(onFulfilled, onRejected) {
+        if(typeof onFulfilled !== 'function') {
+            onFulfilled = () => {}
+        }
+        if(typeof onRejected !== 'function') {
+            onRejected = () => {}
+        }
+        if(this.status === MyPromise.FULFILLED) {
+            onFulfilled(this.value)
+        }
+
+        if(this.status === MyPromise.REJECTED) {
+            onRejected(this.value)
+        }
+    }
+
 }
 
