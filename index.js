@@ -43,8 +43,20 @@ class MyPromise {
 
     if(this.status === MyPromise.PENDING) {
         this.callbacks.push({
-            onFulfilled,
-            onRejected
+            onFulfilled: value => {
+                try {
+                    onFulfilled(value)
+                } catch (error) {
+                    onRejected(error)
+                }
+            },
+            onRejected: value => {
+                try {
+                    onRejected(value)
+                } catch (error) {
+                    onRejected(error)
+                }
+            }
         })
     }
 
