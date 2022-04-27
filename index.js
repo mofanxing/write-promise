@@ -2,11 +2,12 @@ class MyPromise {
   static PENDING = "pending";
   static FULFILLED = "fulfilled";
   static REJECTED = "rejected";
-  constructor(callBack) {
+  constructor(execute) {
     this.status = MyPromise.PENDING;
     this.value = null;
+    this.callbacks = []
     try {
-      callBack(this.reslove.bind(this), this.reject.bind(this));
+        execute(this.reslove.bind(this), this.reject.bind(this));
     } catch (error) {
       this.reject(error);
     }
@@ -16,6 +17,9 @@ class MyPromise {
     if (this.status === MyPromise.PENDING) {
       this.status = MyPromise.FULFILLED;
       this.value = value;
+      this.callbacks.forEach(callback => {
+        callback.onFulfilled(value)
+      })
     }
   }
 
@@ -23,6 +27,9 @@ class MyPromise {
     if (this.status === MyPromise.PENDING) {
       this.status = MyPromise.REJECTED;
       this.value = reason;
+      this.callbacks.forEach(callback => {
+          callback.onRejected(reason)
+      })
     }
   }
 
@@ -33,10 +40,19 @@ class MyPromise {
     if (typeof onRejected !== "function") {
       onRejected = () => {};
     }
+
+    if(this.status === MyPromise.PENDING) {
+        this.callbacks.push({
+            onFulfilled,
+            onRejected
+        })
+    }
+
     if (this.status === MyPromise.FULFILLED) {
+       
       queueMicrotask(() => {
         try {
-          onFulfilled(this.value);
+            onFulfilled(this.value);
         } catch (error) {
           onRejected(error);
         }
@@ -55,10 +71,14 @@ class MyPromise {
   }
 }
 const p = new MyPromise((reslove, reject) => {
-  reslove("解决");
+  setTimeout(() => {
+    reject('拒绝')
+  },1000)
 });
 p.then((res) => {
   console.log(res);
+}, rej => {
+    console.log(rej)
 });
 setTimeout(() => {
     console.log('timeout')
