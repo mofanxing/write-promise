@@ -45,50 +45,56 @@ class MyPromise {
       onRejected = () => {};
     }
 
-    if (this.status === MyPromise.PENDING) {
-      this.callbacks.push({
-        onFulfilled: (value) => {
+    return new MyPromise((reslove, reject) => {
+      if (this.status === MyPromise.PENDING) {
+        this.callbacks.push({
+          onFulfilled: (value) => {
+            try {
+              let result = onFulfilled(value);
+              reslove(result)
+            } catch (error) {
+              onRejected(error);
+            }
+          },
+          onRejected: (value) => {
+            try {
+              let result = onRejected(value);
+              reslove(result)
+            } catch (error) {
+              onRejected(error);
+            }
+          },
+        });
+      }
+
+      if (this.status === MyPromise.FULFILLED) {
+        queueMicrotask(() => {
           try {
-            onFulfilled(value);
+            let result = onFulfilled(this.value);
+            reslove(result)
           } catch (error) {
             onRejected(error);
           }
-        },
-        onRejected: (value) => {
+        });
+      }
+
+      if (this.status === MyPromise.REJECTED) {
+        queueMicrotask(() => {
           try {
-            onRejected(value);
+            let result = onRejected(this.value);
+            reslove(result)
           } catch (error) {
             onRejected(error);
           }
-        },
-      });
-    }
-
-    if (this.status === MyPromise.FULFILLED) {
-      queueMicrotask(() => {
-        try {
-          onFulfilled(this.value);
-        } catch (error) {
-          onRejected(error);
-        }
-      });
-    }
-
-    if (this.status === MyPromise.REJECTED) {
-      queueMicrotask(() => {
-        try {
-          onRejected(this.value);
-        } catch (error) {
-          onRejected(error);
-        }
-      });
-    }
+        });
+      }
+    });
   }
 }
 const p = new MyPromise((reslove, reject) => {
   setTimeout(() => {
     reject("拒绝");
-    console.log('sss')
+    console.log("sss");
   }, 1000);
 });
 p.then(
@@ -97,11 +103,20 @@ p.then(
   },
   (rej) => {
     console.log(rej);
+    return 'a000'
   }
-);
+).then(res => {
+  console.log(res,111)
+},rej => {
+  console.log(rej)
+})
 
 setTimeout(() => {
   console.log("timeout");
 });
 
 console.log("执行完成");
+
+
+
+//promise 的状态只会影响第一个then函数
