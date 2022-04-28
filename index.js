@@ -39,10 +39,10 @@ class MyPromise {
 
   then(onFulfilled, onRejected) {
     if (typeof onFulfilled !== "function") {
-      onFulfilled = () => {};
+      onFulfilled = () => this.value;
     }
     if (typeof onRejected !== "function") {
-      onRejected = () => {};
+      onRejected = () => {throw this.value};
     }
 
     return new MyPromise((reslove, reject) => {
@@ -106,10 +106,12 @@ p.then(
     console.log(rej);
     return 'a000'
   }
-).then(res => {
+).then().then(res => {
   console.log(res,111)
 },rej => {
   console.log(rej, '222rej')
+}).then(res => {
+  console.log(res, 4444)
 })
 
 setTimeout(() => {
@@ -119,3 +121,18 @@ setTimeout(() => {
 console.log("执行完成");
 
 
+// const m = new Promise((reslove, reject) => {
+//   reslove(1)
+// })
+// m.then((res) => {
+//   console.log(llll)
+//   console.log(res, '111res')
+// }).then().then((res) => {
+//   console.log(res, 'res333')
+// }, rej => {
+//   console.log(rej, '333rej')
+// }).then(res => {
+//   console.log(res, '44res')
+// },rej => {
+//   console.log(rej, 'rej444')
+// })
