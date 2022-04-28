@@ -53,7 +53,7 @@ class MyPromise {
               let result = onFulfilled(value);
               reslove(result)
             } catch (error) {
-              onRejected(error);
+              reject(error);
             }
           },
           onRejected: (value) => {
@@ -61,7 +61,7 @@ class MyPromise {
               let result = onRejected(value);
               reslove(result)
             } catch (error) {
-              onRejected(error);
+              reject(error);
             }
           },
         });
@@ -73,7 +73,7 @@ class MyPromise {
             let result = onFulfilled(this.value);
             reslove(result)
           } catch (error) {
-            onRejected(error);
+            reject(error);
           }
         });
       }
@@ -84,7 +84,7 @@ class MyPromise {
             let result = onRejected(this.value);
             reslove(result)
           } catch (error) {
-            onRejected(error);
+            reject(error);
           }
         });
       }
@@ -93,12 +93,13 @@ class MyPromise {
 }
 const p = new MyPromise((reslove, reject) => {
   setTimeout(() => {
-    reject("拒绝");
+    reslove('1111')
     console.log("sss");
   }, 1000);
 });
 p.then(
   (res) => {
+    console.log(pppp)
     console.log(res);
   },
   (rej) => {
@@ -108,7 +109,7 @@ p.then(
 ).then(res => {
   console.log(res,111)
 },rej => {
-  console.log(rej)
+  console.log(rej, '222rej')
 })
 
 setTimeout(() => {
@@ -118,5 +119,3 @@ setTimeout(() => {
 console.log("执行完成");
 
 
-
-//promise 的状态只会影响第一个then函数
