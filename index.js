@@ -51,7 +51,11 @@ class MyPromise {
           onFulfilled: (value) => {
             try {
               let result = onFulfilled(value);
-              reslove(result)
+              if(result instanceof MyPromise) {
+                result.then(reslove,reject)
+              }else {
+                reslove(result)
+              }
             } catch (error) {
               reject(error);
             }
@@ -59,7 +63,11 @@ class MyPromise {
           onRejected: (value) => {
             try {
               let result = onRejected(value);
-              reslove(result)
+              if(result instanceof MyPromise) {
+                result.then(reslove,reject)
+              }else {
+                reslove(result)
+              }
             } catch (error) {
               reject(error);
             }
@@ -99,8 +107,11 @@ const p = new MyPromise((reslove, reject) => {
 });
 p.then(
   (res) => {
-    console.log(pppp)
-    console.log(res);
+    return new MyPromise((reslove, reject) => {
+      setTimeout(() => {
+        reslove('新的promise')
+      },1000)
+    })
   },
   (rej) => {
     console.log(rej);
@@ -110,10 +121,7 @@ p.then(
   console.log(res,111)
 },rej => {
   console.log(rej, '222rej')
-}).then(res => {
-  console.log(res, 4444)
 })
-
 setTimeout(() => {
   console.log("timeout");
 });
