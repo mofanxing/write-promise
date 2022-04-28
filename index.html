@@ -5,8 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .box{
+            height: 400px;
+            background-color: pink;
+        }
+    </style>
 </head>
 <body>
+    <div class="box"></div>
     <script src="./index.js"></script>
+    <script>
+    //  document.querySelector('.box').addEventListener('mousedown', function(e) {
+    //      if(e.button === 2) {
+    //          console.log('右键')
+    //      }
+    //      return false
+    //  })
+    // document.oncontextmenu = function(e) {
+    //     e.preventDefault()
+    // }
+    document.querySelector('.box').addEventListener('contextmenu', function(e) {
+        e.preventDefault()
+        console.log('右键')
+    })
+    </script>
 </body>
 </html>
